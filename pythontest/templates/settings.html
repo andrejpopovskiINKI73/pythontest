@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+{% block content %}
+     <div class="content-section">
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Settings</legend>
+                <div class="form-group">
+                    <h2>Currently logged in user: {{ current_user.username }}</h2>
+                    {{ form.keywords.label(class="form-control-label") }}
+
+                    {% if form.keywords.errors %}
+                        {{ form.keywords(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.keywords.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.keywords(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.threshold.label(class="form-control-label") }}
+                    {% if form.threshold.errors %}
+                        {{ form.threshold(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.threshold.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.threshold(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+            </fieldset>
+            <div class="form-group">
+                {{ form.submit(class="btn btn-outline-info") }}
+            </div>
+        </form>
+    </div>
+
+{% endblock content %}
