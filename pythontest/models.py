@@ -13,6 +13,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(60), nullable=False)
     keywords = db.relationship('Keywords', backref='used_by', lazy=True, uselist=False)
+    # uses = db.relationship('Keywords', secondary=user_keywords, backref=db.backref('users', lazy='dynamic'))
 
     def __repr__(self):
         return f"User('{self.username}', '{self.email}')"
@@ -20,6 +21,6 @@ class User(db.Model, UserMixin):
 
 class Keywords(db.Model):
     keyword_id = db.Column(db.Integer, primary_key=True)
-    keyword = db.Column(db.String(500))
+    keyword = db.Column(db.String)
     threshold = db.Column(db.Integer, default=3)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
