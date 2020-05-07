@@ -23,21 +23,6 @@
             <div class="form-group">
                 {{ form.submit(class="btn btn-outline-info") }}
             </div>
-
-            {% for article in articles %}
-            <article class="media content-section">
-                  <div class="media-body">
-                    <div class="article-metadata">
-                        <h2 class="mr-2" href="#">{{ article.article }}</h2>
-
-                    </div>
-                    <div>
-                        <p class="article-content">{{ article.content }}</p>
-                        <p><a class="article-title" href="#">{{ article.link }}</a></p>
-                    </div>
-                  </div>
-                </article>
-        {% endfor %}
         </form>
     </div>
 

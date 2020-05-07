@@ -1,23 +1,14 @@
 from pythontest.models import User, Keywords
-from pythontest import app, bcrypt, db, session
+from pythontest import app, bcrypt, db
 from flask import render_template, url_for, flash, redirect, request
 from pythontest.forms import RegistrationForm, LoginForm, SettingsForm, SuggestionsForm
 from flask_login import login_user, current_user, logout_user, login_required
 import feedparser
 
-'''articles = [ {
-    'article': "Article 1",
-    'content': "content 1",
-    'link': "Link1"
-}, {
-    'article': "Article 2",
-    'content': "content 2",
-    'link': "Link2"
-}
-]'''
 
-# Login Required ke treba!
+
 @app.route("/home")
+@login_required
 def home():
     return render_template('home.html')
 
@@ -63,6 +54,7 @@ def logout():
 @app.route("/home/settings", methods=['GET', 'POST'])
 @login_required
 def settings():
+    keywords = db.session.query(Keywords).filter_by(user_id=current_user.id).first()
     form = SettingsForm()
     if form.validate_on_submit():
         key = Keywords(keyword=form.keywords.data, threshold=form.threshold.data, used_by=current_user)
@@ -70,6 +62,9 @@ def settings():
         db.session.commit()
         flash('Settings have been saved', 'success')
         return redirect(url_for('suggestions'))
+    elif request.method == 'GET':
+        form.keywords.data = keywords.keyword
+        form.threshold.data = keywords.threshold
     return render_template('settings.html', title='Settings', form=form)
 
 
@@ -80,10 +75,13 @@ def suggestions():
     if form.validate_on_submit():
         rss = form.url.data
         feed = feedparser.parse(rss)
-        key = ['python', 'java']
+        key = db.session.query(Keywords.keyword).filter_by(user_id=current_user.id).first()
+        thres = list(db.session.query(Keywords.threshold).filter_by(user_id=current_user.id).first())
+        key1 = ''.join(key).split(',')
+        counter = 0
         for post in feed.entries:
-            for i in key:
-                if i in post.title.lower():
-                    flash(f'{post.title} : {post.link} \n')
-        return redirect(url_for('home'))
+            for i in key1:
+                if i in post.description.lower():
+                    counter += 1
+        return render_template('home.html', title='Home', feed=feed, key1=key1, counter=counter, thres=thres)
     return render_template('suggestions.html', title='Settings', form=form)
