@@ -12,7 +12,7 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(20), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(60), nullable=False)
-    keywords = db.relationship('Keywords', backref='used_by', lazy=True)
+    keywords = db.relationship('Keywords', backref='used_by', lazy=True, uselist=False)
     # uses = db.relationship('Keywords', secondary=user_keywords, backref=db.backref('users', lazy='dynamic'))
 
     def __repr__(self):

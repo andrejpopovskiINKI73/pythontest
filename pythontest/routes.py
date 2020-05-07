@@ -1,6 +1,6 @@
 from pythontest.models import User, Keywords
 from pythontest import app, bcrypt, db
-from flask import render_template, url_for, flash, redirect, request
+from flask import render_template, url_for, flash, redirect, request, abort
 from pythontest.forms import RegistrationForm, LoginForm, SettingsForm, SuggestionsForm
 from flask_login import login_user, current_user, logout_user, login_required
 import feedparser
@@ -61,6 +61,23 @@ def settings():
         db.session.add(key)
         db.session.commit()
         flash('Settings have been saved', 'success')
+        return redirect(url_for('suggestions'))
+    return render_template('settings.html', title='Settings', form=form)
+
+
+@app.route("/home/settings/update", methods=['GET', 'POST'])
+@login_required
+def update_settings():
+    user = db.session.query(User).filter_by(id=current_user.id).first()
+    if user.id != current_user.id:
+        abort(403)
+    keywords = db.session.query(Keywords).filter_by(user_id=current_user.id).first()
+    form = SettingsForm()
+    if form.validate_on_submit():
+        keywords.keyword = form.keywords.data
+        keywords.threshold = form.threshold.data
+        db.session.commit()
+        flash('Settings have been updated!', 'success')
         return redirect(url_for('suggestions'))
     elif request.method == 'GET':
         form.keywords.data = keywords.keyword
