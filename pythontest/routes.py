@@ -54,7 +54,6 @@ def logout():
 @app.route("/home/settings", methods=['GET', 'POST'])
 @login_required
 def settings():
-    keywords = db.session.query(Keywords).filter_by(user_id=current_user.id).first()
     form = SettingsForm()
     if form.validate_on_submit():
         key = Keywords(keyword=form.keywords.data, threshold=form.threshold.data, used_by=current_user)
