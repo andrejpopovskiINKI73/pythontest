@@ -6,7 +6,6 @@ from flask_login import login_user, current_user, logout_user, login_required
 import feedparser
 
 
-
 @app.route("/home")
 @login_required
 def home():
@@ -16,6 +15,7 @@ def home():
 @app.route("/", methods=['GET', 'POST'])
 @app.route("/register", methods=['GET', 'POST'])
 def register():
+    db.create_all()
     if current_user.is_authenticated:
         return redirect(url_for('settings'))
     form = RegistrationForm()
